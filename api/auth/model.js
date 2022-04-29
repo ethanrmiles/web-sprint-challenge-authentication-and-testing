@@ -17,5 +17,7 @@ function findById(id){
 }
 
 function add(user){
-    return null
+    return db('users')
+    .insert(user)
+    .then(([id]) => findById(id))
 }
