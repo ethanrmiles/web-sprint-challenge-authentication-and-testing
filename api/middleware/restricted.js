@@ -21,9 +21,11 @@ module.exports = (req, res, next) => {
   jwt.verify(token, JWT_SECRET, async (err, decodedToken) => {
     if(err){
       console.log(err)
-      next({ status:401, message: missingTokenMessage })
+      next({ status:401, message: invalidTokenMessage })
       return
     }
-    console.log(decodedToken)
+
+    // if()
+    // console.log(decodedToken)
   })
 };

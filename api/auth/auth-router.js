@@ -3,10 +3,10 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const restricted = require('../middleware/restricted')
 const JWT_SECRET = 'shh'
+const model = require('./model')
 
 
-router.post('/register', (req, res) => {
-  res.json('implement register, please!');
+router.post('/register', (req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -32,6 +32,25 @@ router.post('/register', (req, res) => {
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
+      let user = req.body
+      const hash = bcrypt.hashSync(user.password, 3)
+      user.password = hash
+
+      const existingUser = model.findById()
+
+     if(user.username === null || user.username === ''){
+       next({ status: 400, message: 'username and password required'})
+     }else if(user.password === null || user.password === '' ){
+      next({ status: 400, message: 'username and password required'})
+     }else {
+       model.add(user)
+       .then(newUser => {
+         res.status(201).json({ message: `welcome, ${user.username}`})
+       })
+       .catch(err => {
+         next({status: 400, message: 'username and password required'})
+       })
+     }
 });
 
 router.post('/login', (req, res) => {

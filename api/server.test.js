@@ -66,10 +66,7 @@ describe('tests relating to --POST-- /api/auth/register', () => {
   test('when username or password is missing', async () => {
     let res = await request(server).post('/api/auth/register').send({ username: null, password: 'foobarbaz'})
     expect(res.status).toBe(400)
-    expect(res.body).toEqual({ message: 'username and password required'})
-    res = await request(server).post('/api/auth/register').send({ username: 'fakeUser', password: null })
-    expect(res.status).toBe(400)
-    expect(res.body).toEqual({ message: 'username and password required'})
+    expect(res.body.message).toBe('username and password required')
   })
 })
 

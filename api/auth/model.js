@@ -4,6 +4,7 @@ module.exports = {
     findAll,
     findById,
     add,
+    findUser
 }
 
 function findAll() {
@@ -16,8 +17,16 @@ function findById(id){
     .first()
 }
 
-function add(user){
+function findUser(username){
     return db('users')
-    .insert(user)
-    .then(([id]) => findById(id))
+    .where('username', username)
+    .first()
+}
+
+async function add(user){
+    // return db('users')
+    // .insert(user)
+    // .then(([id]) => findById(id))
+    const [id] = await db('users').insert(user)
+    return findById(id)
 }
