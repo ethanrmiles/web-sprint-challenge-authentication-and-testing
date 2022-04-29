@@ -102,7 +102,9 @@ describe('tests relating to /jokes', () => {
     const res = await request(server).get('/api/jokes')
     expect(res.body.message).toBe('token invalid')
   })
-  test('requests with a valid token display jokes', () => {
-    
+  test('requests with a valid token display jokes', async() => {
+    let res = await request(server).post('/api/auth/login').send({username: 'fakeUser', password: '1234'})
+    res = await request(server).get('/api/jokes').set('authorization', res.body.token)
+    expect(res.body.length).toBe(3)
   })
 })
