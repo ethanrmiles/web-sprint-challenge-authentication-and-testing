@@ -77,7 +77,6 @@ describe('tests relating to --POST-- /api/auth/register', () => {
 describe('tests relating to --POST-- /api/auth/login', () => {
   test('can successfully login', async () => {
     const res = await request(server).post('/api/auth/login').send({username: 'fakeUser', password: '1234'})
-    console.log(res.body)
     expect(res.body.message).toEqual('welcome, fakeUser')
     expect(res.body).toHaveProperty('token')
   })
@@ -95,5 +94,15 @@ describe('tests relating to --POST-- /api/auth/login', () => {
     const res = await request(server).post('/api/auth/login').send({ username: null , password: '1234' })
     expect(res.status).toBe(401)
     expect(res.body).toEqual({ message: 'username and password required' })
+  })
+})
+
+describe('tests relating to /jokes', () => {
+  test('requests without a token are not allowed', async () => {
+    const res = await request(server).get('/api/jokes')
+    expect(res.body.message).toBe('token invalid')
+  })
+  test('requests with a valid token display jokes', () => {
+    
   })
 })
