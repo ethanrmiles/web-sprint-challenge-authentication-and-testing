@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const JWT_SECRET = 'shh'
+const model = require('../auth/model')
 
 
 module.exports = (req, res, next) => {
@@ -24,8 +25,14 @@ module.exports = (req, res, next) => {
       next({ status:401, message: invalidTokenMessage })
       return
     }
+    const user = await model.findById(decodedToken.subject)
+    if(decodedToken.iat < user.logged_out_time) {
+      next({ status: 401, message: MESSAGE_401 });
+      return;
+    }
 
-    // if()
-    // console.log(decodedToken)
+    req.decodedJwt = decodedToken;
+    console.log('decoded token:', req.decodedJwt);
+    next();
   })
 };

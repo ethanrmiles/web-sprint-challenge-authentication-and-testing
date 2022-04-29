@@ -32,20 +32,17 @@ router.post('/register', (req, res, next) => {
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
-      let user = req.body
-      const hash = bcrypt.hashSync(user.password, 3)
-      user.password = hash
+      let { username, password } = req.body
+      const hash = bcrypt.hashSync(password, 8)
 
-      const existingUser = model.findById()
-
-     if(user.username === null || user.username === ''){
+     if(username === null || username === ''){
        next({ status: 400, message: 'username and password required'})
-     }else if(user.password === null || user.password === '' ){
+     }else if(password === null || password === '' ){
       next({ status: 400, message: 'username and password required'})
      }else {
-       model.add(user)
+       model.add({username, password: hash})
        .then(newUser => {
-         res.status(201).json({ message: `welcome, ${user.username}`})
+         res.status(201).json({ message: `welcome, ${username}`, hash})
        })
        .catch(err => {
          next({status: 400, message: 'username and password required'})
@@ -53,8 +50,7 @@ router.post('/register', (req, res, next) => {
      }
 });
 
-router.post('/login', (req, res) => {
-  res.json('implement login, please!');
+router.post('/login', async(req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -79,7 +75,28 @@ router.post('/login', (req, res) => {
       the response body should include a string exactly as follows: "invalid credentials".
   */
  let { username, password } = req.body
- 
+      if(!username || !password){
+        next({status:401, message: 'username and password required'})
+      }else {
+        const existingUser = await model.findUser(username)
+        if(existingUser && bcrypt.compareSync(password, existingUser.password)){
+          res.status(200).json({
+            message: `welcome ${username}`,
+            token: generateToken(existingUser)
+          })
+        } else {
+          next({ status: 401, message: 'invalid credentials'})
+        }
+      }
 });
+
+function generateToken(user){
+  const payload = {
+    subject: user.id,
+    username: user.username,
+  }
+  const options = { expiresIn: '1d'}
+  return jwt.sign(payload, JWT_SECRET, options)
+}
 
 module.exports = router;
