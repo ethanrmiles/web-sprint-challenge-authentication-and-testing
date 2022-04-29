@@ -7,7 +7,7 @@ module.exports = {
 }
 
 function findAll() {
-    return null
+    return db('users')
 }
 
 function findById(id){

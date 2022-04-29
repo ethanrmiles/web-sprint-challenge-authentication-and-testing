@@ -31,7 +31,7 @@ describe('tests checking model functions', () => {
   test('can get all', async () => {
     const res = await model.findAll()
     expect(res.length).toBe(2)
-    expect(res.username[1]).toBe('ethan')
+    expect(res[1].username).toBe('ethan')
   })
   test('can get by id', async() => {
     let res = await model.findById(0)
