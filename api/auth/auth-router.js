@@ -1,7 +1,12 @@
 const router = require('express').Router();
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const restricted = require('../middleware/restricted')
+const JWT_SECRET = 'shh'
+
 
 router.post('/register', (req, res) => {
-  res.end('implement register, please!');
+  res.json('implement register, please!');
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.

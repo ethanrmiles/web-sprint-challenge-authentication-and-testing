@@ -17,3 +17,19 @@ describe('tests relating to the jokes endpoint', () => {
     expect(res.body).toEqual({ message: 'the server is up and running!'})
   })
 })
+
+describe('tests relating to **POST** /api/auth/register', () => {
+  test('can create a new user when all requirements fufilled', async () => {
+     await request(server).post('/api/auth/register').send({ username: 'fakeUser', password: 'foobarbaz'})
+    const fakeUser = await db('users').where('username', 'fakeUser').first()
+    expect(fakeUser).toMatchObject({ username: 'fakeUser'})
+  })
+  test('when username or password is missing', async () => {
+    let res = await request(server).post('/api/auth/register').send({ username: null, password: 'foobarbaz'})
+    expect(res.status).toBe(400)
+    expect(res.body).toEqual({ message: 'username and password required'})
+    res = await request(server).post('/api/auth/register').send({ username: 'fakeUser', password: null })
+    expect(res.status).toBe(400)
+    expect(res.body).toEqual({ message: 'username and password required'})
+  })
+})
