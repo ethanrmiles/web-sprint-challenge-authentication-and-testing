@@ -46,6 +46,10 @@ describe('tests checking model functions', () => {
     res = await model.findAll()
     expect(res.length).toBe(3)
   })
+  test('can find by user', async() => {
+    let res = await model.findUser('ethan')
+    expect(res.username).toBe('ethan')
+  })
 })
 
 
