@@ -14,14 +14,14 @@ beforeAll(async () => {
 beforeEach( async () => {
   await db('users').truncate()
   await db('users').insert([
-    { username: 'fakeUser', password: '"$2a$08$QlDr5TaW49BxnLc0Ip6yMuZDpg7j36p2w2CWvpDYRiz.2y6lP82XS"', }, //password is 1234
-    { username: 'ethan', password: '"$2a$08$QlDr5TaW49BxnLc0Ip6yMuZDpg7j36p2w2CWvpDYRiz.2y6lP82XS"', },
+    { username: 'fakeUser', password: '$2a$08$QlDr5TaW49BxnLc0Ip6yMuZDpg7j36p2w2CWvpDYRiz.2y6lP82XS', }, //password is 1234
+    { username: 'ethan', password: '$2a$08$QlDr5TaW49BxnLc0Ip6yMuZDpg7j36p2w2CWvpDYRiz.2y6lP82XS', },
   ])
 })
 
-afterAll(async () => {
-  await db.destroy()
-})
+// afterAll(async () => {
+//   await db.destroy()
+// })
 
 test('sanity', () => {
   expect(true).toBe(true)
@@ -75,12 +75,12 @@ describe('tests relating to --POST-- /api/auth/register', () => {
 })
 
 describe('tests relating to --POST-- /api/auth/login', () => {
-  // test('can successfully login', async () => {
-  //   const res = await request(server).post('/api/auth/login').send({username: 'fakeUser', password: '1234'})
-  //   console.log(res.body)
-  //   expect(res.body.message).toEqual('welcome, fakeUser')
-  //   expect(res.body).toHaveProperty('token')
-  // })
+  test('can successfully login', async () => {
+    const res = await request(server).post('/api/auth/login').send({username: 'fakeUser', password: '1234'})
+    console.log(res.body)
+    expect(res.body.message).toEqual('welcome, fakeUser')
+    expect(res.body).toHaveProperty('token')
+  })
   test('message on failed login due to invalid password or invalid username', async () => {
     const res = await request(server).post('/api/auth/login').send({ username: 'fakeUser', password: 'theWRONGpassword98' })
     expect(res.status).toBe(401)

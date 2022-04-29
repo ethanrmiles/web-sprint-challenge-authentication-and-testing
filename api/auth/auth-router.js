@@ -81,7 +81,7 @@ router.post('/login', async(req, res, next) => {
         const existingUser = await model.findUser(username)
         if(existingUser && bcrypt.compareSync(password, existingUser.password)){
           res.status(200).json({
-            message: `welcome ${username}`,
+            message: `welcome, ${username}`,
             token: generateToken(existingUser)
           })
         } else {
