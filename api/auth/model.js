@@ -11,7 +11,9 @@ function findAll() {
 }
 
 function findById(id){
-    return null
+    return db('users')
+    .where('id', id)
+    .first()
 }
 
 function add(user){
