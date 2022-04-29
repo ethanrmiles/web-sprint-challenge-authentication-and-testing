@@ -6,15 +6,48 @@ const db = require('../data/dbConfig')
 const jokesData = require('./jokes/jokes-data')
 const model = require('./auth/model')
 
-const fakeUser = {
-  username: 'fakeUser',
-  password: 'foobarbaz'
-}
+beforeAll(async () => {
+  await db.migrate.rollback()
+  await db.migrate.latest()
+})
 
+beforeEach( async () => {
+  await db('users').truncate()
+  await db('users').insert([
+    { username: 'fakeUser', password: 'foobarbaz'},
+    { username: 'ethan', password: 'miles'},
+  ])
+})
+
+afterAll(async () => {
+  await db.destroy()
+})
 
 test('sanity', () => {
   expect(true).toBe(true)
 })
+
+describe('tests checking model functions', () => {
+  test('can get all', async () => {
+    const res = await model.findAll()
+    expect(res.length).toBe(2)
+    expect(res.username[1]).toBe('ethan')
+  })
+  test('can get by id', async() => {
+    let res = await model.findById(0)
+    expect(res).not.toBeDefined()
+    res = await model.findById(1)
+    expect(res.username).toBe('fakeUser')
+  })
+  test('can add', async () => {
+    let res = await model.add({ username: 'bloom', password: 'tech' })
+    expect(res).toHaveProperty('username', 'bloom')
+    expect(res.id).toBe(3)
+    res = await model.findAll()
+    expect(res.length).toBe(3)
+  })
+})
+
 
 describe('tests relating to the jokes endpoint', () => {
   test('check that the server is up and running', async() => {
@@ -26,7 +59,7 @@ describe('tests relating to the jokes endpoint', () => {
 
 describe('tests relating to --POST-- /api/auth/register', () => {
   test('can create a new user when all requirements fufilled', async () => {
-     await request(server).post('/api/auth/register').send(fakeUser)
+     await request(server).post('/api/auth/register').send({username: 'fakeUser', password: 'foobarbaz'})
     const fakeUser = await db('users').where('username', 'fakeUser').first()
     expect(fakeUser).toMatchObject({ username: 'fakeUser'})
   })
@@ -42,7 +75,7 @@ describe('tests relating to --POST-- /api/auth/register', () => {
 
 describe('tests relating to --POST-- /api/auth/login', () => {
   test('can successfully login', async () => {
-    const res = await request(server).post('/api/auth/login').send(fakeUser)
+    const res = await request(server).post('/api/auth/login').send({username: 'fakeUser', password: 'foobarbaz'})
     expect(res.body.message).toEqual('welcome, fakeUser')
     expect(res.body).toHaveProperty('token')
   })

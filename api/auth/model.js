@@ -2,7 +2,7 @@ const db = require('../../data/dbConfig')
 
 module.exports = {
     findAll,
-    findBy,
+    findById,
     add,
 }
 
@@ -10,7 +10,7 @@ function findAll() {
     return null
 }
 
-function findBy(id){
+function findById(id){
     return null
 }
 
