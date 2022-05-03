@@ -21,14 +21,15 @@ module.exports = (req, res, next) => {
   const invalidTokenMessage = 'token invalid'
   jwt.verify(token, JWT_SECRET, async (err, decodedToken) => {
     if(err){
-      next({ status:401, message: invalidTokenMessage })
+      next({ status:401, message: 'token is required or is invalid' })
       return
     }
     const user = await model.findById(decodedToken.subject)
     if(decodedToken.iat < user.logged_out_time) {
-      next({ status: 401, message: MESSAGE_401 });
+      next({ status: 401, message: 'token is required or is invalid' });
       return;
     }
+    
 
     req.decodedJwt = decodedToken;
     console.log('decoded token:', req.decodedJwt);

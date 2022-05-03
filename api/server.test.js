@@ -100,7 +100,7 @@ describe('tests relating to --POST-- /api/auth/login', () => {
 describe('tests relating to /jokes', () => {
   test('requests without a token are not allowed', async () => {
     const res = await request(server).get('/api/jokes')
-    expect(res.body.message).toBe('token invalid')
+    expect(res.body.message).toBe('token is required or is invalid')
   })
   test('requests with a valid token display jokes', async() => {
     let res = await request(server).post('/api/auth/login').send({username: 'fakeUser', password: '1234'})
