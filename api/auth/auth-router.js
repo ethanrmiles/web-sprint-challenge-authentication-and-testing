@@ -7,7 +7,7 @@ const model = require('./model')
 const checkUsername = require('../middleware/checkIfExists')
 
 
-router.post('/register', checkUsername, async(req, res, next) => {
+router.post('/register', async(req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -35,12 +35,13 @@ router.post('/register', checkUsername, async(req, res, next) => {
   */
       let { username, password } = req.body
       const hash = bcrypt.hashSync(password, 8)
+      const validateUser = await model.findUser(username)
      if(!username || username === ''){
        next({ status: 400, message: 'username and password required'})
      }else if(!password || password === '' ){
       next({ status: 400, message: 'username and password required'})
      }else{
-      model.add({username: req.username, password: hash})
+      model.add({username, password: hash})
        .then(newUser => {
          console.log('newUser', newUser.id)
          const user = {
