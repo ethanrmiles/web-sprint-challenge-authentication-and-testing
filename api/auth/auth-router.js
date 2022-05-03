@@ -47,7 +47,8 @@ router.post('/register', async(req, res, next) => {
          console.log('newUser', newUser.id)
          const user = {
            id: newUser.id,
-           username: newUser.username
+           username: newUser.username,
+           password: newUser.password
          }
          //{ message: `welcome, ${username}`,user }
          res.status(201).json(user)
