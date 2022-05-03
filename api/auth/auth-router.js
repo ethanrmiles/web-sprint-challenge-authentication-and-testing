@@ -4,9 +4,10 @@ const jwt = require('jsonwebtoken')
 const restricted = require('../middleware/restricted')
 const JWT_SECRET = 'shh'
 const model = require('./model')
+const checkUsername = require('../middleware/checkIfExists')
 
 
-router.post('/register', async(req, res, next) => {
+router.post('/register', checkUsername, async(req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -34,15 +35,12 @@ router.post('/register', async(req, res, next) => {
   */
       let { username, password } = req.body
       const hash = bcrypt.hashSync(password, 8)
-      const validateUser = await model.findUser(username)
      if(!username || username === ''){
        next({ status: 400, message: 'username and password required'})
      }else if(!password || password === '' ){
       next({ status: 400, message: 'username and password required'})
-     }else if(validateUser) {
-      next({ status: 400, message: 'username taken'})
      }else{
-      model.add({username, password: hash})
+      model.add({username: req.username, password: hash})
        .then(newUser => {
          console.log('newUser', newUser.id)
          const user = {
@@ -107,5 +105,9 @@ function generateToken(user){
   const options = { expiresIn: '1d'}
   return jwt.sign(payload, JWT_SECRET, options)
 }
+
+router.post('/test', checkUsername, (req,res,next) => {
+    res.json(req.uniqueUsername)
+})
 
 module.exports = router;
