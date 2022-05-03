@@ -6,7 +6,7 @@ const JWT_SECRET = 'shh'
 const model = require('./model')
 
 
-router.post('/register', (req, res, next) => {
+router.post('/register', async(req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -34,13 +34,15 @@ router.post('/register', (req, res, next) => {
   */
       let { username, password } = req.body
       const hash = bcrypt.hashSync(password, 8)
-
+      const validateUser = await model.findUser(username)
      if(username === null || username === ''){
        next({ status: 400, message: 'username and password required'})
      }else if(password === null || password === '' ){
       next({ status: 400, message: 'username and password required'})
-     }else {
-       model.add({username, password: hash})
+     }else if(validateUser) {
+      next({ status: 400, message: 'username taken'})
+     }else{
+      model.add({username, password: hash})
        .then(newUser => {
          console.log('newUser', newUser.id)
          const id = newUser.id
