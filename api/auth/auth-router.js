@@ -35,9 +35,9 @@ router.post('/register', async(req, res, next) => {
       let { username, password } = req.body
       const hash = bcrypt.hashSync(password, 8)
       const validateUser = await model.findUser(username)
-     if(username === null || username === ''){
+     if(!username || username === ''){
        next({ status: 400, message: 'username and password required'})
-     }else if(password === null || password === '' ){
+     }else if(!password || password === '' ){
       next({ status: 400, message: 'username and password required'})
      }else if(validateUser) {
       next({ status: 400, message: 'username taken'})
