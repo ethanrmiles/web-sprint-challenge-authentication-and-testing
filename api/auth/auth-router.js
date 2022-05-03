@@ -49,7 +49,8 @@ router.post('/register', async(req, res, next) => {
            id: newUser.id,
            username: newUser.username
          }
-         res.status(201).json({ message: `welcome, ${username}`,user })
+         //{ message: `welcome, ${username}`,user }
+         res.status(201).json(user)
        })
        .catch(err => {
          next({status: 400, message: 'username and password required'})
