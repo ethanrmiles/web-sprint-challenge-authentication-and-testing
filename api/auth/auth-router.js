@@ -42,8 +42,9 @@ router.post('/register', (req, res, next) => {
      }else {
        model.add({username, password: hash})
        .then(newUser => {
-         console.log('newUser', newUser)
-         res.status(201).json({ message: `welcome, ${username}`, id})
+         console.log('newUser', newUser.id)
+         const id = newUser.id
+         res.status(201).json({ message: `welcome, ${username}`, })
        })
        .catch(err => {
          next({status: 400, message: 'username and password required'})
