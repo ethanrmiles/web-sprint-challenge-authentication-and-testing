@@ -46,7 +46,7 @@ router.post('/register', async(req, res, next) => {
        .then(newUser => {
          console.log('newUser', newUser.id)
          const id = newUser.id
-         res.status(201).json({ message: `welcome, ${username}`, })
+         res.status(201).json({ message: `welcome, ${username}`,id })
        })
        .catch(err => {
          next({status: 400, message: 'username and password required'})
