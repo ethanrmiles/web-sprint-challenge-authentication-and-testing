@@ -18,11 +18,13 @@ function findById(id){
 }
 
 async function findUser(username){
-    const [user] = await db('users').where('username', username)
-    return user
+    return db('users').where('username', username)
 }
 
 async function add(user){
+    // return db('users')
+    // .insert(user)
+    // .then(([id]) => findById(id))
     const [id] = await db('users').insert(user)
     return findById(id)
 }
