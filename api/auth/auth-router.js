@@ -4,33 +4,57 @@ const jwt = require('jsonwebtoken')
 const restricted = require('../middleware/restricted')
 const JWT_SECRET = 'shh'
 const model = require('./model')
-const checkUsername = require('../middleware/checkIfExists')
-const checkPayload  = require('../middleware/checkPayload')
 
 
-router.post('/register',checkPayload, async(req, res, next) => {
- 
+router.post('/register', async(req, res, next) => {
+  /*
+    IMPLEMENT
+    You are welcome to build additional middlewares to help with the endpoint's functionality.
+    DO NOT EXCEED 2^8 ROUNDS OF HASHING!
+
+    1- In order to register a new account the client must provide `username` and `password`:
+      {
+        "username": "Captain Marvel", // must not exist already in the `users` table
+        "password": "foobar"          // needs to be hashed before it's saved
+      }
+
+    2- On SUCCESSFUL registration,
+      the response body should have `id`, `username` and `password`:
+      {
+        "id": 1,
+        "username": "Captain Marvel",
+        "password": "2a$08$jG.wIGR2S4hxuyWNcBf9MuoC4y0dNy7qC/LbmtuFBSdIhWks2LhpG"
+      }
+
+    3- On FAILED registration due to `username` or `password` missing from the request body,
+      the response body should include a string exactly as follows: "username and password required".
+
+    4- On FAILED registration due to the `username` being taken,
+      the response body should include a string exactly as follows: "username taken".
+  */
       let { username, password } = req.body
       const hash = bcrypt.hashSync(password, 8)
-      // const validateUser = await model.findUser(username)
+      const validateUser = await model.findUser(username)
+     if(!username || username === ''){
+       next({ status: 400, message: 'username and password required'})
+     }else if(!password || password === '' ){
+      next({ status: 400, message: 'username and password required'})
+     }else if(validateUser) {
+      next({ status: 400, message: 'username taken'})
+     }else{
       model.add({username, password: hash})
        .then(newUser => {
          console.log('newUser', newUser.id)
-         const user = {
-           id: newUser.id,
-           username: newUser.username,
-           password: newUser.password
-         }
-         //{ message: `welcome, ${username}`,user }
-         res.status(201).json(user)
+         const user = newUser
+         res.status(201).json({ message: `welcome, ${username}`,user })
        })
        .catch(err => {
-         next({status: 501, message: 'internal server ERROR'})
+         next({status: 400, message: 'username and password required'})
        })
-     
+     }
 });
 
-router.post('/login', checkPayload, async(req, res, next) => {
+router.post('/login', async(req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -55,13 +79,28 @@ router.post('/login', checkPayload, async(req, res, next) => {
       the response body should include a string exactly as follows: "invalid credentials".
   */
  let { username, password } = req.body
-        const existingUser = await model.findUser(username)
-        if(existingUser && bcrypt.compareSync(password, existingUser.password)){
-          res.status(200).json({
-            message: `welcome, ${username}`,
-            token: generateToken(existingUser)
-          })
-        }   
+      if(!username || !password){
+        next({status:401, message: 'username and password required'})
+      }else {
+        model.findUser(username)
+       .then(user => {
+        if(user){
+          if(bcrypt.compareSync(password, user.password)){
+            res.status(200).json({
+              message: `welcome, ${username}`,
+              token: generateToken(user)
+            })
+          } else {
+            next({ status: 401, message: 'invalid credentials'})
+          }
+        }else{
+          next({ message: 'no user returned'})
+        }
+       })
+       .catch(err => {
+         next(err)
+       })
+      }
 });
 
 function generateToken(user){
@@ -72,9 +111,5 @@ function generateToken(user){
   const options = { expiresIn: '1d'}
   return jwt.sign(payload, JWT_SECRET, options)
 }
-
-router.post('/test', checkUsername, (req,res,next) => {
-    res.json(req.uniqueUsername)
-})
 
 module.exports = router;

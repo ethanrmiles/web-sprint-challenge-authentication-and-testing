@@ -18,7 +18,7 @@ function findById(id){
 }
 
 async function findUser(username){
-    return db('users').where('username', username)
+    return db('users').where('username', username).first()
 }
 
 async function add(user){
