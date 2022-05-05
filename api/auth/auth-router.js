@@ -93,7 +93,7 @@ router.post('/login', async(req, res, next) => {
             next({ status: 401, message: 'invalid credentials'})
           }
         }else{
-          next({ message: 'no user returned'})
+          next({ message: 'no user returned, invalid'})
         }
        })
        .catch(err => {
