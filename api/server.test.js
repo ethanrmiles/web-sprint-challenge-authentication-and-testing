@@ -65,11 +65,12 @@ describe('tests relating to --POST-- /api/auth/register', () => {
   test('can create a new user when all requirements fufilled', async () => {
      await request(server).post('/api/auth/register').send({username: 'fakeUser2', password: '1234'})
     const fakeUser = await db('users').where('username', 'fakeUser2').first()
+    console.log(fakeUser)
     expect(fakeUser).toMatchObject({ username: 'fakeUser2'})
   })
   test('when username or password is missing', async () => {
     let res = await request(server).post('/api/auth/register').send({ username: null, password: '1234'})
-    expect(res.status).toBe(400)
+    expect(res.status).toBe(401)
     expect(res.body.message).toBe('username and password required')
   })
 })
