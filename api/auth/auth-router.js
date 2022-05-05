@@ -44,7 +44,6 @@ router.post('/register', async(req, res, next) => {
      }else{
       model.add({username, password: hash})
        .then(newUser => {
-         console.log('newUser', newUser.id)
          const user = newUser
          res.status(201).json({ message: `welcome, ${username}`,user })
        })

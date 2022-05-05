@@ -74,28 +74,28 @@ describe('tests relating to --POST-- /api/auth/register', () => {
   })
 })
 
-// describe('tests relating to --POST-- /api/auth/login', () => {
-//   test('can successfully login', async () => {
-//     const res = await request(server).post('/api/auth/login').send({username: 'fakeUser', password: '1234'})
-//     expect(res.body.message).toEqual('welcome, fakeUser')
-//     expect(res.body).toHaveProperty('token')
-//   })
-//   test('message on failed login due to invalid password or invalid username', async () => {
-//     const res = await request(server).post('/api/auth/login').send({ username: 'fakeUser', password: 'theWRONGpassword98' })
-//     expect(res.status).toBe(401)
-//     expect(res.body).toEqual({ message: 'invalid credentials'})
-//   })
-//   test('message on failed login due to invalid password or invalid username', async () => {
-//     const res = await request(server).post('/api/auth/login').send({ username: 'fakeUser', password: 'theWRONGpassword98' })
-//     expect(res.status).toBe(401)
-//     expect(res.body).toEqual({ message: 'invalid credentials'})
-//   })
-//   test('message on failed login because username or password null', async() => {
-//     const res = await request(server).post('/api/auth/login').send({ username: null , password: '1234' })
-//     expect(res.status).toBe(401)
-//     expect(res.body).toEqual({ message: 'username and password required' })
-//   })
-// })
+describe('tests relating to --POST-- /api/auth/login', () => {
+  test('can successfully login', async () => {
+    const res = await request(server).post('/api/auth/login').send({username: 'fakeUser', password: '1234'})
+    expect(res.body.message).toEqual('welcome, fakeUser')
+    expect(res.body).toHaveProperty('token')
+  })
+  test('message on failed login due to invalid password or invalid username', async () => {
+    const res = await request(server).post('/api/auth/login').send({ username: 'fakeUser', password: 'theWRONGpassword98' })
+    expect(res.status).toBe(401)
+    expect(res.body).toEqual({ message: 'invalid credentials'})
+  })
+  test('message on failed login due to invalid password or invalid username', async () => {
+    const res = await request(server).post('/api/auth/login').send({ username: 'fakeUser', password: 'theWRONGpassword98' })
+    expect(res.status).toBe(401)
+    expect(res.body).toEqual({ message: 'invalid credentials'})
+  })
+  test('message on failed login because username or password null', async() => {
+    const res = await request(server).post('/api/auth/login').send({ username: null , password: '1234' })
+    expect(res.status).toBe(401)
+    expect(res.body).toEqual({ message: 'username and password required' })
+  })
+})
 
 // describe('tests relating to /jokes', () => {
 //   test('requests without a token are not allowed', async () => {
@@ -104,6 +104,7 @@ describe('tests relating to --POST-- /api/auth/register', () => {
 //   })
 //   test('requests with a valid token display jokes', async() => {
 //     let res = await request(server).post('/api/auth/login').send({username: 'fakeUser2', password: '1234'})
+//     console.log(res.body)
 //     res = await request(server).get('/api/jokes').set('authorization', res.body.token)
 //     expect(res.body.length).toBe(3)
 //   })
